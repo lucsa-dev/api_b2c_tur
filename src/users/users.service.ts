@@ -4,7 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersRepository } from './repositories/users.repository';
 import { UserEntity, UserWithPasswordEntity } from './entities/user.entity';
 import { NotFoundError } from '../common/errors/types/NotFoundError';
-import bcrypt from 'bcryptjs';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UsersService {
