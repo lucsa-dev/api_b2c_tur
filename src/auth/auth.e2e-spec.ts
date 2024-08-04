@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { INestApplication } from '@nestjs/common';
-import request from 'supertest';
+import * as request from 'supertest';
 import e2eGneralBeforeAll from '../common/tests/e2eGneralBeforeAll';
 
 describe('AuthController e2e tests', () => {

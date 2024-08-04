@@ -1,11 +1,12 @@
 import 'dotenv/config';
 import { INestApplication } from '@nestjs/common';
-import request from 'supertest';
+import * as request from 'supertest';
 import e2eGneralBeforeAll from '../common/tests/e2eGneralBeforeAll';
 
 describe('UsersController e2e tests', () => {
   let app: INestApplication;
   let data: any;
+  let dataBusiness: any;
   let access_token: string;
 
   beforeAll(async () => {
@@ -17,6 +18,12 @@ describe('UsersController e2e tests', () => {
       cpf: '040.199.951-33',
       phone: '85994949494',
       password: '12345',
+    };
+
+    dataBusiness = {
+      ...data,
+      companyName: 'josh doe',
+      cnpj: '65',
     };
   }, 90000);
 
@@ -61,5 +68,18 @@ describe('UsersController e2e tests', () => {
     expect(response.body.name).toBe(data.name);
     expect(response.body.cpf).toBe(data.cpf);
     expect(response.body.email).toBe(data.email);
+  });
+
+  // business users
+
+  it('should create a user business ', async () => {
+    //arrange
+    //act
+    const response = await request(await app.getHttpServer())
+      .post('/business')
+      .send(dataBusiness);
+
+    //assert
+    expect(response.status).toBe(201);
   });
 });
