@@ -5,7 +5,8 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
 }
 
 datasource db {
@@ -24,12 +25,26 @@ model User {
   createdAt         DateTime   @default(now())
   updatedAt         DateTime   @updatedAt
   email_verified_at DateTime?
+  business          Business?
 
   @@map("users")
+}
+
+model Business {
+  id        Int      @id @default(autoincrement())
+  name      String
+  cnpj      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    Int      @unique
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@map("business")
 }
 
 enum RoleEnum {
   ADMIN
   AFFILIATE
   USER
+  BUSINESS
 }
