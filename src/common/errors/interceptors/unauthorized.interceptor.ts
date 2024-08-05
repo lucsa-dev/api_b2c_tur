@@ -12,7 +12,7 @@ import { UnauthorizedError } from '../types/UnauthorizedError';
 export class UnauthorizedInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
-      catchError(error => {
+      catchError((error) => {
         if (error instanceof UnauthorizedError) {
           throw new UnauthorizedException(error.message);
         }

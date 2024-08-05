@@ -14,7 +14,7 @@ import { DatabaseError } from '../types/DatabaseError';
 export class DatabaseInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
-      catchError(error => {
+      catchError((error) => {
         if (isPrismaError(error)) {
           error = handlerDatabaseErrors(error);
         }

@@ -12,7 +12,7 @@ import { ConflictError } from '../types/ConflictError';
 export class ConflictInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
-      catchError(error => {
+      catchError((error) => {
         if (error instanceof ConflictError) {
           throw new ConflictException(error.message);
         }
