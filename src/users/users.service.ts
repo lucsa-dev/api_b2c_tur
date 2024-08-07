@@ -4,14 +4,14 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersRepository } from './repositories/users.repository';
 import { UserEntity, UserWithPasswordEntity } from './entities/user.entity';
 import { NotFoundError } from '../common/errors/types/NotFoundError';
-import * as bcrypt from 'bcryptjs';
+import { hashPassword } from './utils/hasPassword';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly repository: UsersRepository) {}
 
   async create(createUserDto: CreateUserDto): Promise<UserEntity> {
-    createUserDto.password = await this.hashPassword(createUserDto.password);
+    createUserDto.password = await hashPassword(createUserDto.password);
     const create = this.repository.create({ ...createUserDto, role: ['USER'] });
     return create;
   }
@@ -54,12 +54,5 @@ export class UsersService {
 
   remove(id: number): Promise<UserEntity> {
     return this.repository.remove(id);
-  }
-
-  async hashPassword(password: string): Promise<string> {
-    const saltRounds = 10;
-    const salt = await bcrypt.genSalt(saltRounds);
-    const hash = await bcrypt.hash(password, salt);
-    return hash;
   }
 }

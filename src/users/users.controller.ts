@@ -17,12 +17,17 @@ import { Roles } from './decorators/roles.decorator';
 import { RoleEnum } from '@prisma/client';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { UserEntity } from './entities/user.entity';
+import { CreateBusinessDto } from './dto/create-business.dto';
+import { BusinessService } from './business.service';
 
 @ApiTags('users')
 @Controller('users')
 @ApiBearerAuth('access_token')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly businessService: BusinessService,
+  ) {}
 
   @ApiResponse({
     status: 409,
@@ -57,7 +62,7 @@ export class UsersController {
   }
 
   @Get('/me')
-  @Roles(RoleEnum.USER, RoleEnum.ADMIN)
+  @Roles(RoleEnum.USER, RoleEnum.ADMIN, RoleEnum.BUSINESS)
   getMe(@CurrentUser() currentUser: UserEntity) {
     return this.usersService.findOneById(+currentUser.id);
   }
@@ -78,5 +83,11 @@ export class UsersController {
   @Roles(RoleEnum.ADMIN)
   remove(@Param('id') id: string) {
     return this.usersService.remove(+id);
+  }
+
+  @IsPublic()
+  @Post('/business')
+  BusinessCreate(@Body() createBusinessDto: CreateBusinessDto) {
+    return this.businessService.create(createBusinessDto);
   }
 }

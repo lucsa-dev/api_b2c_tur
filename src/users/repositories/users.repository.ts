@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { UserWithRole } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
@@ -19,31 +19,7 @@ export class UsersRepository {
   };
   constructor(private readonly prisma: PrismaService) {}
 
-  async emailExists(email: string): Promise<boolean> {
-    const user = await this.prisma.user.findUnique({
-      where: { email },
-    });
-    return !!user;
-  }
-
-  async cpfExists(cpf: string): Promise<boolean> {
-    const user = await this.prisma.user.findUnique({
-      where: { cpf },
-    });
-    return !!user;
-  }
-
   async create(createUserDto: UserWithRole): Promise<UserEntity> {
-    const emailExists = await this.emailExists(createUserDto.email);
-    if (emailExists) {
-      throw new ConflictException('Email already exists');
-    }
-
-    const cpfExists = await this.cpfExists(createUserDto.cpf);
-    if (cpfExists) {
-      throw new ConflictException('cpf already exists');
-    }
-
     return this.prisma.user.create({
       data: createUserDto,
       select: this.select,
