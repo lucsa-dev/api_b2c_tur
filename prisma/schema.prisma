@@ -32,8 +32,21 @@ model Business {
   updatedAt DateTime @updatedAt
   userId    Int      @unique
   user      User     @relation(fields: [userId], references: [id])
+  Service Service[]
 
   @@map("business")
+}
+
+model Service {
+  id          Int       @id @default(autoincrement())
+  title        String
+  description String?
+  price       Float
+  status      Boolean
+  businessId  Int
+  business    Business  @relation(fields: [businessId], references: [id])
+  
+  @@map("services")
 }
 
 enum RoleEnum {
