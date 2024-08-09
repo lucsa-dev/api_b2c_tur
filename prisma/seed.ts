@@ -23,8 +23,29 @@ async function main() {
       name: 'josh Tester',
       password: await hashPassword('s3cr3tP#SSW)RD'),
       role: ['USER'],
-      cpf: '099.199.951-33',
+      cpf: '099.199.951-34',
       phone: '85994949493',
+    },
+  });
+  await prisma.user.upsert({
+    where: { email: 'josh.business@gmail.com' },
+    update: {},
+    create: {
+      email: 'josh.business@gmail.com',
+      name: 'josh Business',
+      password: await hashPassword('s3cr3tP#SSW)RD'),
+      role: ['BUSINESS'],
+      cpf: '099.199.951-35',
+      phone: '85994949494',
+    },
+  });
+  await prisma.business.upsert({
+    where: { userId: 3 },
+    update: {},
+    create: {
+      userId: 3,
+      companyName: 'josh Business',
+      cnpj: '99.999.999/9999-99',
     },
   });
 }
