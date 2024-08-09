@@ -14,16 +14,16 @@ describe('UsersController e2e tests', () => {
 
     data = {
       name: 'josh doe',
-      email: 'josh@gmail.com',
-      cpf: '040.199.951-33',
-      phone: '85994949494',
-      password: '12345',
+      email: 'josh2@gmail.com',
+      cpf: '042.199.951-33',
+      phone: '85995949495',
+      password: '123456780',
     };
 
     dataBusiness = {
       ...data,
       companyName: 'josh doe',
-      cnpj: '65',
+      cnpj: '92.898.033/0001-10',
     };
   }, 90000);
 
@@ -76,10 +76,30 @@ describe('UsersController e2e tests', () => {
     //arrange
     //act
     const response = await request(await app.getHttpServer())
-      .post('/business')
-      .send(dataBusiness);
+      .post('/users/business')
+      .send({
+        name: 'josh doe',
+        email: 'josh3@gmail.com',
+        cpf: '043.199.951-33',
+        phone: '85995949496',
+        password: '123456780',
+        companyName: 'josh doe',
+        cnpj: '92.898.033/0001-10',
+      });
 
     //assert
     expect(response.status).toBe(201);
+  });
+
+  it('should give error 400 if the cnpj is wrong in /business', async () => {
+    //arrange
+    dataBusiness.cnpj = '9219';
+    //act
+    const response = await request(await app.getHttpServer())
+      .post('/users/business')
+      .send(dataBusiness);
+
+    //assert
+    expect(response.status).toBe(400);
   });
 });

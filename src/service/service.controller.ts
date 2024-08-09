@@ -10,12 +10,19 @@ import {
 import { ServiceService } from './service.service';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Roles } from '..//users/decorators/roles.decorator';
+import { RoleEnum } from '@prisma/client';
+import { IsPublic } from '../auth/decorators/is-public.decorator';
 
+@ApiTags('service')
 @Controller('service')
+@ApiBearerAuth('access_token')
 export class ServiceController {
   constructor(private readonly serviceService: ServiceService) {}
 
   @Post()
+  @Roles(RoleEnum.BUSINESS)
   create(@Body() createServiceDto: CreateServiceDto) {
     return this.serviceService.create(createServiceDto);
   }
@@ -26,6 +33,7 @@ export class ServiceController {
   }
 
   @Get(':id')
+  @IsPublic()
   findOne(@Param('id') id: string) {
     return this.serviceService.findOne(+id);
   }
