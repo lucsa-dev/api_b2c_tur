@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { ServiceService } from './service.service';
 import { CreateServiceDto } from './dto/create-service.dto';
@@ -14,6 +15,8 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Roles } from '..//users/decorators/roles.decorator';
 import { RoleEnum } from '@prisma/client';
 import { IsPublic } from '../auth/decorators/is-public.decorator';
+import { UserEntity } from '../users/entities/user.entity';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
 
 @ApiTags('service')
 @Controller('service')
@@ -23,13 +26,16 @@ export class ServiceController {
 
   @Post()
   @Roles(RoleEnum.BUSINESS)
-  create(@Body() createServiceDto: CreateServiceDto) {
-    return this.serviceService.create(createServiceDto);
+  create(
+    @Body() createServiceDto: CreateServiceDto,
+    @CurrentUser() currentUser: UserEntity,
+  ) {
+    return this.serviceService.create(createServiceDto, currentUser.id);
   }
 
   @Get()
-  findAll() {
-    return this.serviceService.findAll();
+  findAll(@Query('page') page: number = 1, @Query('limit') limit: number = 10) {
+    return this.serviceService.findAll({ page, limit });
   }
 
   @Get(':id')
@@ -39,12 +45,14 @@ export class ServiceController {
   }
 
   @Patch(':id')
+  @Roles(RoleEnum.BUSINESS)
   update(@Param('id') id: string, @Body() updateServiceDto: UpdateServiceDto) {
     return this.serviceService.update(+id, updateServiceDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.serviceService.remove(+id);
+  @Roles(RoleEnum.BUSINESS)
+  remove(@Param('id') id: string, @CurrentUser() currentUser: UserEntity) {
+    return this.serviceService.remove(+id, currentUser.id);
   }
 }

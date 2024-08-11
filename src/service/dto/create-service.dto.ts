@@ -16,8 +16,4 @@ export class CreateServiceDto {
   @IsIn([true, false])
   @IsNotEmpty()
   status: boolean;
-
-  @IsInt()
-  @IsNotEmpty()
-  businessId: number;
 }

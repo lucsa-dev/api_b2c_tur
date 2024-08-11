@@ -48,6 +48,27 @@ async function main() {
       cnpj: '99.999.999/9999-99',
     },
   });
+  await prisma.user.upsert({
+    where: { email: 'josh.business2@gmail.com' },
+    update: {},
+    create: {
+      email: 'josh.business2@gmail.com',
+      name: 'josh Business two',
+      password: await hashPassword('s3cr3tP#SSW)RD'),
+      role: ['BUSINESS'],
+      cpf: '099.199.951-36',
+      phone: '85994949495',
+    },
+  });
+  await prisma.business.upsert({
+    where: { userId: 4 },
+    update: {},
+    create: {
+      userId: 4,
+      companyName: 'josh Business two',
+      cnpj: '99.999.999/9999-98',
+    },
+  });
 }
 main()
   .then(async () => {

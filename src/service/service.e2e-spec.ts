@@ -2,6 +2,7 @@ import 'dotenv/config';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import e2eGneralBeforeAll from '../common/tests/e2eGneralBeforeAll';
+import testLogin from '../common/tests/login';
 
 describe('ServiceController e2e tests', () => {
   let app: INestApplication;
@@ -18,21 +19,15 @@ describe('ServiceController e2e tests', () => {
       status: true,
     };
 
-    const loginResponse = await request(await app.getHttpServer())
-      .post('/login')
-      .set('Accept', 'application/json')
-      .send({
-        email: 'josh.business@gmail.com',
-        password: 's3cr3tP#SSW)RD',
-      });
+    const loginResponse = await testLogin(
+      app,
+      'josh.business@gmail.com',
+      's3cr3tP#SSW)RD',
+    );
 
-    const meResponse = await request(await app.getHttpServer())
-      .get('/users/me')
-      .set('Authorization', `Bearer ${loginResponse.body.access_token}`);
+    data.businessId = loginResponse.user.business.id;
 
-    data.businessId = meResponse.body.business.id;
-
-    access_token = loginResponse.body.access_token;
+    access_token = loginResponse.access_token;
   }, 90000);
 
   it('should create a service if user roles == business', async () => {
@@ -87,5 +82,119 @@ describe('ServiceController e2e tests', () => {
         status: data.status,
       }),
     );
+  });
+
+  //should get all services
+  it('should get all services', async () => {
+    //arrange
+
+    //cadastrar 40 services
+    for (let i = 0; i < 40; i++) {
+      await request(await app.getHttpServer())
+        .post('/service')
+        .send(data)
+        .set('Authorization', `Bearer ${access_token}`);
+    }
+
+    //act
+    const response = await request(await app.getHttpServer())
+      .get('/service?page=3')
+      .set('Authorization', `Bearer ${access_token}`);
+
+    //assert
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: expect.any(Number),
+          title: data.title,
+          description: data.description,
+          price: data.price,
+          status: data.status,
+        }),
+      ]),
+    );
+    expect(response.body.length).toBe(10);
+  });
+
+  //should update a service
+  it('should update a service', async () => {
+    //arrange
+    const updateData = {
+      title: 'Passeio de Buggy Atualizado',
+      description: 'Passeio de Buggy pelas dunas Atualizado',
+      price: 200,
+      status: false,
+    };
+
+    //act
+    const response = await request(await app.getHttpServer())
+      .patch('/service/1')
+      .send(updateData)
+      .set('Authorization', `Bearer ${access_token}`);
+
+    //assert
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        id: expect.any(Number),
+        title: updateData.title,
+        description: updateData.description,
+        price: updateData.price,
+        status: updateData.status,
+      }),
+    );
+  });
+
+  it('should delete a service', async () => {
+    //arrange
+
+    //act
+    const response = await request(await app.getHttpServer())
+      .delete('/service/1')
+      .set('Authorization', `Bearer ${access_token}`);
+
+    //assert
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        id: expect.any(Number),
+        title: expect.any(String),
+        description: expect.any(String),
+        price: expect.any(Number),
+        status: expect.any(Boolean),
+      }),
+    );
+  });
+
+  it('should not delete a service if user is not a business creator', async () => {
+    //arrange
+    // create a service with another user
+    const loginResponse = await testLogin(
+      app,
+      'josh.business2@gmail.com',
+      's3cr3tP#SSW)RD',
+    );
+
+    const data2 = {
+      title: 'Passeio de Buggy',
+      description: 'Passeio de Buggy pelas dunas',
+      price: 100,
+      status: true,
+      businessId: loginResponse.user.business.id,
+    };
+
+    const serviceCreate = await request(await app.getHttpServer())
+      .post('/service')
+      .send(data2)
+      .set('Authorization', `Bearer ${loginResponse.access_token}`);
+
+    //act
+    const response = await request(await app.getHttpServer())
+      .delete(`/service/${serviceCreate.body.id}`)
+      .set('Authorization', `Bearer ${access_token}`);
+
+    //assert
+    expect(response.status).toBe(403);
   });
 });

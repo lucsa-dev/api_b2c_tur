@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { ServiceEntity } from '../entities/service.entity';
 import { CreateServiceDto } from '../dto/create-service.dto';
+import { UpdateServiceDto } from '../dto/update-service.dto';
 
 @Injectable()
 export class ServiceRepository {
@@ -17,11 +18,13 @@ export class ServiceRepository {
   };
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(service: CreateServiceDto): Promise<ServiceEntity> {
-    const { businessId, ...serviceData } = service;
+  async create(
+    service: CreateServiceDto,
+    businessId: number,
+  ): Promise<ServiceEntity> {
     const create = await this.prisma.service.create({
       data: {
-        ...serviceData,
+        ...service,
         business: {
           connect: {
             id: businessId,
@@ -34,8 +37,37 @@ export class ServiceRepository {
     return create;
   }
 
+  async findAll(pagination: {
+    page: number;
+    limit: number;
+  }): Promise<ServiceEntity[]> {
+    const { page, limit } = pagination;
+    return this.prisma.service.findMany({
+      select: this.select,
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+  }
+
   async findOneById(id: number): Promise<ServiceEntity> {
     return this.prisma.service.findUnique({
+      where: { id },
+      select: this.select,
+    });
+  }
+
+  async update(id: number, service: UpdateServiceDto): Promise<ServiceEntity> {
+    return await this.prisma.service.update({
+      where: { id },
+      data: {
+        ...service,
+      },
+      select: this.select,
+    });
+  }
+
+  async remove(id: number): Promise<ServiceEntity> {
+    return this.prisma.service.delete({
       where: { id },
       select: this.select,
     });
