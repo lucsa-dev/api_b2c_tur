@@ -146,6 +146,45 @@ describe('ServiceController e2e tests', () => {
     );
   });
 
+  it('should not update a service if user is not a business creator', async () => {
+    //arrange
+    // create a service with another user
+    const loginResponse = await testLogin(
+      app,
+      'josh.business2@gmail.com',
+      's3cr3tP#SSW)RD',
+    );
+
+    const data2 = {
+      title: 'Passeio de Buggy 2',
+      description: 'Passeio de Buggy pelas dunas 2',
+      price: 100,
+      status: true,
+      businessId: loginResponse.user.business.id,
+    };
+
+    const serviceCreate = await request(await app.getHttpServer())
+      .post('/service')
+      .send(data2)
+      .set('Authorization', `Bearer ${loginResponse.access_token}`);
+
+    const updateData = {
+      title: 'Passeio de Buggy Atualizado',
+      description: 'Passeio de Buggy pelas dunas Atualizado',
+      price: 200,
+      status: false,
+    };
+
+    //act
+    const response = await request(await app.getHttpServer())
+      .patch(`/service/${serviceCreate.body.id}`)
+      .send(updateData)
+      .set('Authorization', `Bearer ${access_token}`);
+
+    //assert
+    expect(response.status).toBe(403);
+  });
+
   it('should delete a service', async () => {
     //arrange
 

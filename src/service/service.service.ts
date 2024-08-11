@@ -24,7 +24,16 @@ export class ServiceService {
     return this.repository.findOneById(id);
   }
 
-  update(id: number, updateServiceDto: UpdateServiceDto) {
+  async update(id: number, updateServiceDto: UpdateServiceDto, userId: number) {
+    // usuario que esta deletando
+    const user = await this.usersService.findOneById(userId);
+    // usuario que esta sendo deletado
+    const service = await this.repository.findOneById(id);
+    if (user.business.id != service.businessId) {
+      throw new ForbiddenException(
+        'You can only update services created by your company!',
+      );
+    }
     return this.repository.update(id, updateServiceDto);
   }
 

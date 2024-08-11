@@ -46,8 +46,12 @@ export class ServiceController {
 
   @Patch(':id')
   @Roles(RoleEnum.BUSINESS)
-  update(@Param('id') id: string, @Body() updateServiceDto: UpdateServiceDto) {
-    return this.serviceService.update(+id, updateServiceDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateServiceDto: UpdateServiceDto,
+    @CurrentUser() currentUser: UserEntity,
+  ) {
+    return this.serviceService.update(+id, updateServiceDto, currentUser.id);
   }
 
   @Delete(':id')
