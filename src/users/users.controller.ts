@@ -19,6 +19,7 @@ import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { UserEntity } from './entities/user.entity';
 import { CreateBusinessDto } from './dto/create-business.dto';
 import { BusinessService } from './business.service';
+import { UpdateBusinessDto } from './dto/update-business.dto';
 
 @ApiTags('users')
 @Controller('users')
@@ -89,5 +90,14 @@ export class UsersController {
   @Post('/business')
   BusinessCreate(@Body() createBusinessDto: CreateBusinessDto) {
     return this.businessService.create(createBusinessDto);
+  }
+
+  @Patch('/business')
+  @Roles(RoleEnum.BUSINESS)
+  BusinessUpdate(
+    @Body() updateBusinessDto: UpdateBusinessDto,
+    @CurrentUser() currentUSer,
+  ) {
+    return this.businessService.update(updateBusinessDto, currentUSer.id);
   }
 }

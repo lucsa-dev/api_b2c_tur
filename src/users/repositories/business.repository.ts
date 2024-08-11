@@ -32,4 +32,21 @@ export class BusinessRepository {
 
     return create;
   }
+
+  async update(
+    business: { companyName: string; cnpj: string },
+    businessId: number,
+  ): Promise<BusinessEntity> {
+    const update = this.prisma.business.update({
+      where: {
+        id: businessId,
+      },
+      data: {
+        ...business,
+      },
+      select: this.select,
+    });
+
+    return update;
+  }
 }

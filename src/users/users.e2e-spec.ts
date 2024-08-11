@@ -2,6 +2,7 @@ import 'dotenv/config';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import e2eGneralBeforeAll from '../common/tests/e2eGneralBeforeAll';
+import testLogin from '../common/tests/login';
 
 describe('UsersController e2e tests', () => {
   let app: INestApplication;
@@ -101,5 +102,24 @@ describe('UsersController e2e tests', () => {
 
     //assert
     expect(response.status).toBe(400);
+  });
+
+  // update business
+  it('should update a user business ', async () => {
+    //arrange
+    const loginResponse = await testLogin(
+      app,
+      'josh.business@gmail.com',
+      's3cr3tP#SSW)RD',
+    );
+    //act
+    const update = await request(await app.getHttpServer())
+      .patch('/users/business')
+      .send({
+        name: 'josh doe updated',
+      })
+      .set('Authorization', `Bearer ${loginResponse.access_token}`);
+    //assert
+    expect(update.status).toBe(200);
   });
 });

@@ -2,9 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersRepository } from './repositories/users.repository';
 import { BusinessRepository } from './repositories/business.repository';
-import { BusinessEndUser } from './entities/business.entity';
+import { BusinessEndUser, BusinessEntity } from './entities/business.entity';
 import { hashPassword } from './utils/hasPassword';
 import { CreateBusinessDto } from './dto/create-business.dto';
+import { UpdateBusinessDto } from './dto/update-business.dto';
 
 @Injectable()
 export class BusinessService {
@@ -28,5 +29,24 @@ export class BusinessService {
 
     const businessCreate = await this.repository.create(business, userCreate);
     return { ...businessCreate, ...userCreate };
+  }
+
+  async update(
+    updateBusinessDto: UpdateBusinessDto,
+    userId: number,
+  ): Promise<BusinessEntity> {
+    const { companyName, cnpj } = updateBusinessDto;
+    const business = {
+      companyName,
+      cnpj,
+    };
+
+    const userResponse = await this.Userrepository.findOneById(userId);
+
+    const businessUpdate = await this.repository.update(
+      business,
+      userResponse.business.id,
+    );
+    return businessUpdate;
   }
 }
