@@ -32,7 +32,7 @@ model Company {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   userId    Int      @unique
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   Service Service[]
 
   @@map("companies")
@@ -48,7 +48,7 @@ model Service {
   categoryId  Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  company    Company  @relation(fields: [companyId], references: [id])
+  company    Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
   category    ServiceCategory @relation(fields: [categoryId], references: [id])
   
   @@map("services")
@@ -72,7 +72,7 @@ model Order {
   status      OrderStatus
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  user        User      @relation(fields: [userId], references: [id])
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   service     Service   @relation(fields: [serviceId], references: [id])
 
   @@map("orders")
