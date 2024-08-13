@@ -14,9 +14,8 @@ describe('OrderController e2e tests', () => {
 
     data = {
       status: 'PENDING',
-      description: 'Passeio de Buggy pelas dunas',
-      categoryId: 1,
-      price: 100,
+      serviceId: 1,
+      qtd: 2,
     };
 
     const loginResponse = await testLogin(
@@ -42,6 +41,12 @@ describe('OrderController e2e tests', () => {
     expect(response.body).toEqual(
       expect.objectContaining({
         id: expect.any(Number),
+        status: data.status,
+        serviceId: data.serviceId,
+        qtd: data.qtd,
+        userId: expect.any(Number),
+        createdAt: expect.any(String),
+        updatedAt: expect.any(String),
       }),
     );
   });
