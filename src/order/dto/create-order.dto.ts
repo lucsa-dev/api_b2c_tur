@@ -1,5 +1,5 @@
 import { OrderStatus } from '@prisma/client';
-import { IsInt, IsNotEmpty } from 'class-validator';
+import { IsInt, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateOrderDto {
   @IsInt()
@@ -10,7 +10,7 @@ export class CreateOrderDto {
   @IsNotEmpty()
   qtd: number;
 
-  @IsInt()
+  @IsString()
   @IsNotEmpty()
   status: OrderStatus;
 }

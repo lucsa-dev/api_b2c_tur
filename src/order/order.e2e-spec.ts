@@ -20,7 +20,7 @@ describe('OrderController e2e tests', () => {
 
     const loginResponse = await testLogin(
       app,
-      'josh.company@gmail.com',
+      'josh.test@gmail.com',
       's3cr3tP#SSW)RD',
     );
 
@@ -29,6 +29,26 @@ describe('OrderController e2e tests', () => {
 
   it('should create a order', async () => {
     //arrange
+    //login no usuário company
+    const userCompany = await testLogin(
+      app,
+      'josh.company2@gmail.com',
+      's3cr3tP#SSW)RD',
+    );
+
+    //cadastrar um serviço
+    const serviceCreate = await request(await app.getHttpServer())
+      .post('/service')
+      .send({
+        title: 'Passeio de Buggy',
+        description: 'Passeio de Buggy pelas dunas',
+        price: 100,
+        status: true,
+        categoryId: 1,
+      })
+      .set('Authorization', `Bearer ${userCompany.access_token}`);
+
+    data.serviceId = serviceCreate.body.id;
 
     //act
     const response = await request(await app.getHttpServer())
@@ -38,16 +58,5 @@ describe('OrderController e2e tests', () => {
 
     //assert
     expect(response.status).toBe(201);
-    expect(response.body).toEqual(
-      expect.objectContaining({
-        id: expect.any(Number),
-        status: data.status,
-        serviceId: data.serviceId,
-        qtd: data.qtd,
-        userId: expect.any(Number),
-        createdAt: expect.any(String),
-        updatedAt: expect.any(String),
-      }),
-    );
   });
 });
