@@ -19,12 +19,13 @@ model User {
   createdAt         DateTime   @default(now())
   updatedAt         DateTime   @updatedAt
   email_verified_at DateTime?
-  business          Business?
+  company          Company?
 
   @@map("users")
+  Order Order[]
 }
 
-model Business {
+model Company {
   id        Int      @id @default(autoincrement())
   companyName      String
   cnpj      String   @unique
@@ -34,7 +35,7 @@ model Business {
   user      User     @relation(fields: [userId], references: [id])
   Service Service[]
 
-  @@map("business")
+  @@map("companies")
 }
 
 model Service {
@@ -43,17 +44,50 @@ model Service {
   description String?
   price       Float
   status      Boolean
-  businessId  Int
+  companyId  Int
+  categoryId  Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  business    Business  @relation(fields: [businessId], references: [id])
+  company    Company  @relation(fields: [companyId], references: [id])
+  category    ServiceCategory @relation(fields: [categoryId], references: [id])
   
   @@map("services")
+  Order Order[]
+}
+model ServiceCategory {
+  id          Int       @id @default(autoincrement())
+  title        String
+  description String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  service     Service[]
+
+  @@map("service_categories")
+}
+
+model Order {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  serviceId   Int
+  status      OrderStatus
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  user        User      @relation(fields: [userId], references: [id])
+  service     Service   @relation(fields: [serviceId], references: [id])
+
+  @@map("orders")
 }
 
 enum RoleEnum {
   ADMIN
   AFFILIATE
   USER
-  BUSINESS
+  COMPANY
+}
+
+enum OrderStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  FINISHED
 }
