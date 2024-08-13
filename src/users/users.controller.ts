@@ -63,7 +63,7 @@ export class UsersController {
   }
 
   @Get('/me')
-  @Roles(RoleEnum.USER, RoleEnum.ADMIN, RoleEnum.BUSINESS)
+  @Roles(RoleEnum.USER, RoleEnum.ADMIN, RoleEnum.COMPANY)
   getMe(@CurrentUser() currentUser: UserEntity) {
     return this.usersService.findOneById(+currentUser.id);
   }
@@ -93,7 +93,7 @@ export class UsersController {
   }
 
   @Patch('/business')
-  @Roles(RoleEnum.BUSINESS)
+  @Roles(RoleEnum.COMPANY)
   BusinessUpdate(
     @Body() updateBusinessDto: UpdateBusinessDto,
     @CurrentUser() currentUSer,

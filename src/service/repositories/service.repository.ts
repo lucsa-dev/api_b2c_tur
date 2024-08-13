@@ -12,7 +12,8 @@ export class ServiceRepository {
     description: true,
     price: true,
     status: true,
-    businessId: true,
+    categoryId: true,
+    companyId: true,
     createdAt: true,
     updatedAt: true,
   };
@@ -20,14 +21,20 @@ export class ServiceRepository {
 
   async create(
     service: CreateServiceDto,
-    businessId: number,
+    companyId: number,
   ): Promise<ServiceEntity> {
+    const { categoryId, ...rest } = service;
     const create = await this.prisma.service.create({
       data: {
-        ...service,
-        business: {
+        ...rest,
+        company: {
           connect: {
-            id: businessId,
+            id: companyId,
+          },
+        },
+        category: {
+          connect: {
+            id: categoryId,
           },
         },
       },
@@ -37,11 +44,27 @@ export class ServiceRepository {
     return create;
   }
 
-  async findAll(pagination: {
+  async findAll(query: {
     page: number;
     limit: number;
+    filters: {
+      title?: string;
+      description?: string;
+      price?: number;
+    };
   }): Promise<ServiceEntity[]> {
-    const { page, limit } = pagination;
+    const { page, limit } = query;
+    const { title, description, price } = query.filters;
+    const where: any = {};
+    if (title) {
+      where.title = { contains: title };
+    }
+    if (description) {
+      where.description = { contains: description };
+    }
+    if (price) {
+      where.price = price;
+    }
     return this.prisma.service.findMany({
       select: this.select,
       skip: (page - 1) * limit,

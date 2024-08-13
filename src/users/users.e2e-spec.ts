@@ -109,7 +109,7 @@ describe('UsersController e2e tests', () => {
     //arrange
     const loginResponse = await testLogin(
       app,
-      'josh.business@gmail.com',
+      'josh.company@gmail.com',
       's3cr3tP#SSW)RD',
     );
     //act

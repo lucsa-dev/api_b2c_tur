@@ -13,11 +13,15 @@ export class ServiceService {
   async create(createServiceDto: CreateServiceDto, UserId: number) {
     const user = await this.usersService.findOneById(UserId);
 
-    return this.repository.create(createServiceDto, user.business.id);
+    return this.repository.create(createServiceDto, user.company.id);
   }
 
-  findAll(pagination: { page: number; limit: number }) {
-    return this.repository.findAll(pagination);
+  findAll(query: {
+    page: number;
+    limit: number;
+    filters: { title?: string; description?: string; price?: number };
+  }) {
+    return this.repository.findAll(query);
   }
 
   findOne(id: number) {
@@ -29,7 +33,7 @@ export class ServiceService {
     const user = await this.usersService.findOneById(userId);
     // usuario que esta sendo deletado
     const service = await this.repository.findOneById(id);
-    if (user.business.id != service.businessId) {
+    if (user.company.id != service.companyId) {
       throw new ForbiddenException(
         'You can only update services created by your company!',
       );
@@ -42,7 +46,7 @@ export class ServiceService {
     const user = await this.usersService.findOneById(userId);
     // usuario que esta sendo deletado
     const service = await this.repository.findOneById(id);
-    if (user.business.id != service.businessId) {
+    if (user.company.id != service.companyId) {
       throw new ForbiddenException(
         'You can only delete services created by your company!',
       );

@@ -1,5 +1,5 @@
 import { RoleEnum, User } from '@prisma/client';
-import { BusinessEntity } from './business.entity';
+import { CompanyEntity } from './company.entity';
 
 export class UserEntity implements Omit<User, 'password'> {
   id: number;
@@ -9,7 +9,7 @@ export class UserEntity implements Omit<User, 'password'> {
   name: string;
   role: RoleEnum[];
   email_verified_at: Date | null;
-  business?: BusinessEntity;
+  company?: CompanyEntity;
   createdAt: Date;
   updatedAt: Date;
 }

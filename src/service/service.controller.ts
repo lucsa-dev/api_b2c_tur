@@ -25,7 +25,7 @@ export class ServiceController {
   constructor(private readonly serviceService: ServiceService) {}
 
   @Post()
-  @Roles(RoleEnum.BUSINESS)
+  @Roles(RoleEnum.COMPANY)
   create(
     @Body() createServiceDto: CreateServiceDto,
     @CurrentUser() currentUser: UserEntity,
@@ -34,8 +34,22 @@ export class ServiceController {
   }
 
   @Get()
-  findAll(@Query('page') page: number = 1, @Query('limit') limit: number = 10) {
-    return this.serviceService.findAll({ page, limit });
+  findAll(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+    @Query('title') title?: string,
+    @Query('description') description?: string,
+    @Query('price') price?: number,
+  ) {
+    return this.serviceService.findAll({
+      page,
+      limit,
+      filters: {
+        title,
+        description,
+        price,
+      },
+    });
   }
 
   @Get(':id')
@@ -45,7 +59,7 @@ export class ServiceController {
   }
 
   @Patch(':id')
-  @Roles(RoleEnum.BUSINESS)
+  @Roles(RoleEnum.COMPANY)
   update(
     @Param('id') id: string,
     @Body() updateServiceDto: UpdateServiceDto,
@@ -55,7 +69,7 @@ export class ServiceController {
   }
 
   @Delete(':id')
-  @Roles(RoleEnum.BUSINESS)
+  @Roles(RoleEnum.COMPANY)
   remove(@Param('id') id: string, @CurrentUser() currentUser: UserEntity) {
     return this.serviceService.remove(+id, currentUser.id);
   }

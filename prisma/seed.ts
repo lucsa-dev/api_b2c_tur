@@ -28,45 +28,62 @@ async function main() {
     },
   });
   await prisma.user.upsert({
-    where: { email: 'josh.business@gmail.com' },
+    where: { email: 'josh.company@gmail.com' },
     update: {},
     create: {
-      email: 'josh.business@gmail.com',
-      name: 'josh Business',
+      email: 'josh.company@gmail.com',
+      name: 'josh company',
       password: await hashPassword('s3cr3tP#SSW)RD'),
-      role: ['BUSINESS'],
+      role: ['COMPANY'],
       cpf: '099.199.951-35',
       phone: '85994949494',
     },
   });
-  await prisma.business.upsert({
+  await prisma.company.upsert({
     where: { userId: 3 },
     update: {},
     create: {
       userId: 3,
-      companyName: 'josh Business',
+      companyName: 'josh company',
       cnpj: '99.999.999/9999-99',
     },
   });
   await prisma.user.upsert({
-    where: { email: 'josh.business2@gmail.com' },
+    where: { email: 'josh.company2@gmail.com' },
     update: {},
     create: {
-      email: 'josh.business2@gmail.com',
-      name: 'josh Business two',
+      email: 'josh.company2@gmail.com',
+      name: 'josh company two',
       password: await hashPassword('s3cr3tP#SSW)RD'),
-      role: ['BUSINESS'],
+      role: ['COMPANY'],
       cpf: '099.199.951-36',
       phone: '85994949495',
     },
   });
-  await prisma.business.upsert({
+  await prisma.company.upsert({
     where: { userId: 4 },
     update: {},
     create: {
       userId: 4,
-      companyName: 'josh Business two',
+      companyName: 'josh company two',
       cnpj: '99.999.999/9999-98',
+    },
+  });
+  //adicionar categorias
+  await prisma.serviceCategory.upsert({
+    where: { id: 1 },
+    update: {},
+    create: {
+      title: 'Passeio de Buggy',
+      description: 'Passeio de Buggy pelas dunas',
+    },
+  });
+  await prisma.serviceCategory.upsert({
+    where: { id: 2 },
+    update: {},
+    create: {
+      title: 'Passeio de Helicóptero',
+      description: 'Passeio de helicóoptero pela cidade',
     },
   });
 }

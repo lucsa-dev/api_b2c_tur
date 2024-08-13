@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { BusinessEntity } from '../entities/business.entity';
+import { CompanyEntity } from '../entities/company.entity';
 import { UserEntity } from '../entities/user.entity';
 
 @Injectable()
@@ -15,12 +15,12 @@ export class BusinessRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(
-    business: { companyName: string; cnpj: string },
+    company: { companyName: string; cnpj: string },
     user: UserEntity,
-  ): Promise<BusinessEntity> {
-    const create = this.prisma.business.create({
+  ): Promise<CompanyEntity> {
+    const create = this.prisma.company.create({
       data: {
-        ...business,
+        ...company,
         user: {
           connect: {
             id: user.id,
@@ -34,15 +34,15 @@ export class BusinessRepository {
   }
 
   async update(
-    business: { companyName: string; cnpj: string },
-    businessId: number,
-  ): Promise<BusinessEntity> {
-    const update = this.prisma.business.update({
+    company: { companyName: string; cnpj: string },
+    companyId: number,
+  ): Promise<CompanyEntity> {
+    const update = this.prisma.company.update({
       where: {
-        id: businessId,
+        id: companyId,
       },
       data: {
-        ...business,
+        ...company,
       },
       select: this.select,
     });

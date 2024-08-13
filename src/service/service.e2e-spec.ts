@@ -15,22 +15,23 @@ describe('ServiceController e2e tests', () => {
     data = {
       title: 'Passeio de Buggy',
       description: 'Passeio de Buggy pelas dunas',
+      categoryId: 1,
       price: 100,
       status: true,
     };
 
     const loginResponse = await testLogin(
       app,
-      'josh.business@gmail.com',
+      'josh.company@gmail.com',
       's3cr3tP#SSW)RD',
     );
 
-    data.businessId = loginResponse.user.business.id;
+    data.companyId = loginResponse.user.company.id;
 
     access_token = loginResponse.access_token;
   }, 90000);
 
-  it('should create a service if user roles == business', async () => {
+  it('should create a service if user roles == company', async () => {
     //arrange
 
     //act
@@ -52,7 +53,7 @@ describe('ServiceController e2e tests', () => {
     );
   });
 
-  it('should not create a service if user is not business', async () => {
+  it('should not create a service if user is not company', async () => {
     //arrange
 
     //act
@@ -117,6 +118,29 @@ describe('ServiceController e2e tests', () => {
     expect(response.body.length).toBe(10);
   });
 
+  it('should get all services with filters', async () => {
+    //arrange
+
+    //act
+    const response = await request(await app.getHttpServer())
+      .get('/service?title=Passeio de Buggy')
+      .set('Authorization', `Bearer ${access_token}`);
+
+    //assert
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: expect.any(Number),
+          title: data.title,
+          description: data.description,
+          price: data.price,
+          status: data.status,
+        }),
+      ]),
+    );
+  });
+
   //should update a service
   it('should update a service', async () => {
     //arrange
@@ -146,21 +170,22 @@ describe('ServiceController e2e tests', () => {
     );
   });
 
-  it('should not update a service if user is not a business creator', async () => {
+  it('should not update a service if user is not a company creator', async () => {
     //arrange
     // create a service with another user
     const loginResponse = await testLogin(
       app,
-      'josh.business2@gmail.com',
+      'josh.company2@gmail.com',
       's3cr3tP#SSW)RD',
     );
 
     const data2 = {
       title: 'Passeio de Buggy 2',
       description: 'Passeio de Buggy pelas dunas 2',
+      categoryId: 1,
       price: 100,
       status: true,
-      businessId: loginResponse.user.business.id,
+      companyId: loginResponse.user.company.id,
     };
 
     const serviceCreate = await request(await app.getHttpServer())
@@ -206,21 +231,22 @@ describe('ServiceController e2e tests', () => {
     );
   });
 
-  it('should not delete a service if user is not a business creator', async () => {
+  it('should not delete a service if user is not a company creator', async () => {
     //arrange
     // create a service with another user
     const loginResponse = await testLogin(
       app,
-      'josh.business2@gmail.com',
+      'josh.company2@gmail.com',
       's3cr3tP#SSW)RD',
     );
 
     const data2 = {
       title: 'Passeio de Buggy',
       description: 'Passeio de Buggy pelas dunas',
+      categoryId: 1,
       price: 100,
       status: true,
-      businessId: loginResponse.user.business.id,
+      companyId: loginResponse.user.company.id,
     };
 
     const serviceCreate = await request(await app.getHttpServer())

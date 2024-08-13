@@ -1,5 +1,5 @@
 -- AlterEnum
-ALTER TYPE "RoleEnum" ADD VALUE 'BUSINESS';
+ALTER TYPE "RoleEnum" ADD VALUE 'COMPANY';
 
 -- CreateTable
 CREATE TABLE "business" (

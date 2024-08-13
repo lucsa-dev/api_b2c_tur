@@ -14,7 +14,7 @@ export class UsersRepository {
     phone: true,
     role: true,
     email_verified_at: true,
-    business: true,
+    company: true,
     createdAt: true,
     updatedAt: true,
   };

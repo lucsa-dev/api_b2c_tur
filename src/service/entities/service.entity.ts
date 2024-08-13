@@ -4,7 +4,7 @@ export class ServiceEntity {
   description: string;
   price: number;
   status: boolean;
-  businessId: number;
+  companyId: number;
   createdAt: Date;
   updatedAt: Date;
 }

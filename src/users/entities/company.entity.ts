@@ -1,6 +1,6 @@
 import { UserEntity } from './user.entity';
 
-export class BusinessEntity {
+export class CompanyEntity {
   id: number;
   companyName: string;
   cnpj: string;
@@ -8,4 +8,4 @@ export class BusinessEntity {
   updatedAt: Date;
 }
 
-export type BusinessEndUser = BusinessEntity & UserEntity;
+export type CompanyEndUser = CompanyEntity & UserEntity;
