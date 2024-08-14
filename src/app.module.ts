@@ -8,9 +8,19 @@ import { APP_GUARD } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { ServiceModule } from './service/service.module';
 import { OrderModule } from './order/order.module';
+import { BullModule } from '@nestjs/bullmq';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    BullModule.forRoot({
+      connection: {
+        host: 'redis',
+        port: 6379,
+      },
+    }),
+    BullModule.registerQueue({
+      name: 'order',
+    }),
     AuthModule,
     UsersModule,
     ServiceModule,
