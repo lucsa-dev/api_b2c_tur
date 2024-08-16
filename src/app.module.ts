@@ -18,9 +18,6 @@ import { BullModule } from '@nestjs/bullmq';
         port: 6379,
       },
     }),
-    BullModule.registerQueue({
-      name: 'order',
-    }),
     AuthModule,
     UsersModule,
     ServiceModule,

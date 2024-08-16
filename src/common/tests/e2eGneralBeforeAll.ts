@@ -34,6 +34,9 @@ export default async function e2eGneralBeforeAll(): Promise<INestApplication> {
           port: +process.env.REDIS_PORT,
         },
       }),
+      BullModule.registerQueue({
+        name: 'order-queue',
+      }),
     ],
   }).compile();
   const app = module.createNestApplication();
