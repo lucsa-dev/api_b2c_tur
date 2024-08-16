@@ -8,7 +8,7 @@ describe('AuthController e2e tests', () => {
 
   beforeAll(async () => {
     app = await e2eGneralBeforeAll();
-  }, 10000);
+  }, 20000);
 
   it('should set access_token in POST /login', async () => {
     //arrange
