@@ -1,7 +1,5 @@
 FROM node:20
 
-RUN apk add --no-cache bash
-
 RUN npm cache clean --force && rm -rf node_modules package-lock.json
     
 RUN npm install
