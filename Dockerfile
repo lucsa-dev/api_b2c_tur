@@ -22,6 +22,10 @@ COPY . .
 # Regenerar o cliente Prisma
 RUN npx prisma generate
 
+# Ajuste as permissões do diretório de trabalho
+RUN chown -R node:node /home/node/app
+
+
 # Defina o usuário para node
 USER node
 
