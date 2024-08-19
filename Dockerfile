@@ -19,6 +19,9 @@ RUN npm install -g @nestjs/cli
 # Copie o restante do código da aplicação
 COPY . .
 
+# Regenerar o cliente Prisma
+RUN npx prisma generate
+
 # Defina o usuário para node
 USER node
 
